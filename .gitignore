@@ -1,0 +1,11 @@
+# output dirs
+build/
+out/
+
+# editors / IDEs
+.vscode/
+.vs/
+
+# idf sdkconfigs
+sdkconfig
+sdkconfig.old
