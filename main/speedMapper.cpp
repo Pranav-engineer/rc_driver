@@ -15,9 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#include "speedMapper.hpp"
 
-#include <iostream>
+/** @todo define following */
+wheelSpeed speedMapper::map(vectorSpeed& vec){
+    return wheelSpeed();
+};
 
-extern "C" void app_main(void){
-    std::cout << "RC driver is currently under development\n";
-};      
+
+/** @todo define following */
+wheelSpeed speedMapper::map(phySpeed& phy){
+    return wheelSpeed();
+};
