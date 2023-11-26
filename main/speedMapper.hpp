@@ -66,6 +66,7 @@ struct phySpeed {
  */
 class speedMapper {
 
+public:
     virtual wheelSpeed map(vectorSpeed& vec);
     virtual wheelSpeed map(phySpeed& phy);
 };

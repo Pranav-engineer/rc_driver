@@ -15,19 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "speedMapper.hpp"
+#ifndef ENV_HPP
+#define ENV_HPP
 
-/** @todo define following */
-wheelSpeed speedMapper::map(vectorSpeed& vec){
-    // dummy test code
-    wheelSpeed speed;
-    speed.rawSpeed[0] = vec.mag;
-    speed.rawSpeed[1] = vec.mag;
-    return speed;
+#include <qmd.hpp>
+#include "speedSrc.hpp"
+
+// Env containing pointers to all components
+struct Env {
+public:
+    speedMapper* mapper = 0;
+    speedSrc* src = 0;
+    qmd* motorHandler = 0;
 };
 
-
-/** @todo define following */
-wheelSpeed speedMapper::map(phySpeed& phy){
-    return wheelSpeed();
-};
+#endif //  ENV_HPP

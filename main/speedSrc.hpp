@@ -15,19 +15,34 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#ifndef SPEED_SRC_HPP
+#define SPEED_SRC_HPP
+
 #include "speedMapper.hpp"
+class Env;
 
-/** @todo define following */
-wheelSpeed speedMapper::map(vectorSpeed& vec){
-    // dummy test code
-    wheelSpeed speed;
-    speed.rawSpeed[0] = vec.mag;
-    speed.rawSpeed[1] = vec.mag;
-    return speed;
+
+/**
+ * @brief base class to define interface of various speed sources
+ * 
+ */
+class speedSrc {
+public:
+    Env* env = nullptr;
+
+
+    speedSrc(Env* en) : env(en)  { };
+    
+    /**
+     * @brief get the calculated speed 
+     * 
+     * @return wheelSpeed resultant speed
+     */
+    virtual wheelSpeed getSpeed() { return wheelSpeed(); };
+
 };
 
 
-/** @todo define following */
-wheelSpeed speedMapper::map(phySpeed& phy){
-    return wheelSpeed();
-};
+
+
+#endif //  SPEED_SRC_HPP
