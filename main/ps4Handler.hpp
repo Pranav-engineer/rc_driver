@@ -15,34 +15,40 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#ifndef PS4_HANDLER_HPP
+#define PS4_HANDLER_HPP
 
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include <iostream>
-#include <qmd.hpp>
+#include <PS4Controller.h>
 
-#include "env.hpp"
-#include "ps4Handler.hpp"
-#include "qmdHandler.hpp"
+#include "speedSrc.hpp"
 
 
-Env env;
-speedMapper map;
-int pwmPins[] = {12, 13, 14, 27};
-int dirPins[] = {26, 25, 33, 32};
+/**
+ * @brief ps4Handler handles ps4 interface and UI and complete I/O
+ * 
+ */
+class ps4Handler : public speedSrc {
+
+private:
+
+    static PS4Controller ps;
+    static ps4Handler* handler;
 
 
+    static void connectCallback();
+    static void disConnectCallback();
+    static void eventCallback();
 
-extern "C" void app_main(void){
-    printf("RC driver is currently under development\n");
+public:
 
-    env =  Env{
-        .mapper = &map,
-        .src = new ps4Handler(&env, "b8:d6:1a:44:98:7e"),
-        .motorHandler = new qmd(4, pwmPins, dirPins)
-    };
+    float maxSpeed = 0.5f;
+    int8_t& joyX = ps.data.analog.stick.rx , &joyY = ps.data.analog.stick.ry;
 
-    upd = qmdHandler(&env);
-    upd.run();
-};      
+    ps4Handler(Env* env, const char* macId);
+    vectorSpeed velocity;
+    wheelSpeed getSpeed();
+};
+
+
+#endif //  PS4_HANDLER_HPP

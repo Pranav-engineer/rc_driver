@@ -15,34 +15,28 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#ifndef QMD_HANDLER_HPP
+#define QMD_HANDLER_HPP
 
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include <iostream>
-#include <qmd.hpp>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
 
 #include "env.hpp"
-#include "ps4Handler.hpp"
-#include "qmdHandler.hpp"
 
+class qmdHandler {
+    
+public:
+    Env* env;
+    int updateFrequency = 50;
 
-Env env;
-speedMapper map;
-int pwmPins[] = {12, 13, 14, 27};
-int dirPins[] = {26, 25, 33, 32};
+    qmdHandler(){};
+    qmdHandler(Env* en) : env(en) {};
 
+    void run();
+    static void srun(void* update);
 
-
-extern "C" void app_main(void){
-    printf("RC driver is currently under development\n");
-
-    env =  Env{
-        .mapper = &map,
-        .src = new ps4Handler(&env, "b8:d6:1a:44:98:7e"),
-        .motorHandler = new qmd(4, pwmPins, dirPins)
-    };
-
-    upd = qmdHandler(&env);
-    upd.run();
-};      
+    private:
+    TaskHandle_t task;
+};
+#endif //  QMD_HANDLER_HPP

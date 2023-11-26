@@ -16,33 +16,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+#include <string.h>
+#include <esp_log.h>
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include <iostream>
-#include <qmd.hpp>
-
-#include "env.hpp"
-#include "ps4Handler.hpp"
 #include "qmdHandler.hpp"
 
 
-Env env;
-speedMapper map;
-int pwmPins[] = {12, 13, 14, 27};
-int dirPins[] = {26, 25, 33, 32};
+void qmdHandler::run(){
+    xTaskCreate(srun, "qmdHandler",  16000, this, 1, &task);
+};
 
+void qmdHandler::srun(void* hand){
 
+    qmdHandler* handler = (qmdHandler*) hand;
+    Env* en = ((qmdHandler*)hand)->env;
+    while (true)
+    {
+        memcpy(en->motorHandler->speeds, en->src->getSpeed().rawSpeed, 4 * sizeof(float));
+        en->motorHandler->update();
 
-extern "C" void app_main(void){
-    printf("RC driver is currently under development\n");
-
-    env =  Env{
-        .mapper = &map,
-        .src = new ps4Handler(&env, "b8:d6:1a:44:98:7e"),
-        .motorHandler = new qmd(4, pwmPins, dirPins)
-    };
-
-    upd = qmdHandler(&env);
-    upd.run();
-};      
+        vTaskDelay(pdMS_TO_TICKS(1000 /  handler->updateFrequency));
+    }
+    
+};
