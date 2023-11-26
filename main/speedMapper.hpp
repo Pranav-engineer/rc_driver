@@ -16,6 +16,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+#ifndef SPEED_MAPPER_HPP
+#define SPEED_MAPPER_HPP
+
+
 /**
  * @brief wheelSpeed to represent normalized wheel speed
  */
@@ -65,3 +69,6 @@ class speedMapper {
     virtual wheelSpeed map(vectorSpeed& vec);
     virtual wheelSpeed map(phySpeed& phy);
 };
+
+
+#endif //  SPEED_MAPPER_HPP

@@ -6,3 +6,7 @@
 	path = components/micro_ros_espidf_component
 	url = https://github.com/micro-ROS/micro_ros_espidf_component.git
 	branch = humble
+[submodule "components/qmd"]
+	path = components/qmd
+	url = https://github.com/shvass/qmd.git
+	branch = main
