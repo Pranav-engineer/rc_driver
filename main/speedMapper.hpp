@@ -34,17 +34,32 @@ struct wheelSpeed {
 
 
 /**
- * @brief body velocity in terms of vector representation
+ * @brief speed in terms of circular path 
  * mag - normalized magnitude of the speed
- * cos - cosine of the vector, with respect to +y axis (forward direction)
+ * u - ratio of minor wheel to the major wheel ( exterior ) while rotation 
  * left - vector belongs to left of y axis or not.
  * 
  */
-struct vectorSpeed
+struct pathSpeed
 {
-    float mag = 0.0f, cos = 0.0f;
+    float mag = 0.0f, u = 0.0f;
     bool left = true;
 };
+
+
+/**
+ * @brief speed in terms of circular path 
+ * mag - normalized magnitude of the speed
+ * r - radius of rotation (if radius < 0 will imply radius = infinity (straight path))
+ * left - path belongs to left of y axis or not.
+ * 
+ */
+struct radialSpeed
+{
+    float mag = 0.0f, r = 0.0f;
+    bool left = true;
+};
+
 
 /**
  * @brief speed in terms of physical params
@@ -67,7 +82,7 @@ struct phySpeed {
 class speedMapper {
 
 public:
-    virtual wheelSpeed map(vectorSpeed& vec);
+    virtual wheelSpeed map(pathSpeed& vec);
     virtual wheelSpeed map(phySpeed& phy);
 };
 

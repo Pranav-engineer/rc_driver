@@ -18,11 +18,17 @@
 #include "speedMapper.hpp"
 
 /** @todo define following */
-wheelSpeed speedMapper::map(vectorSpeed& vec){
+wheelSpeed speedMapper::map(pathSpeed& vec){
     // dummy test code
     wheelSpeed speed;
     speed.rawSpeed[0] = vec.mag;
-    speed.rawSpeed[1] = vec.mag;
+    speed.rawSpeed[1] = vec.mag * vec.u;
+
+    if(vec.left){
+        speed.rawSpeed[0] = speed.rawSpeed[1];
+        speed.rawSpeed[1] = vec.mag;
+    }
+
     return speed;
 };
 

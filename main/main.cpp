@@ -32,7 +32,7 @@ speedMapper map;
 int pwmPins[] = {12, 13, 14, 27};
 int dirPins[] = {26, 25, 33, 32};
 
-
+qmdHandler upd;
 
 extern "C" void app_main(void){
     printf("RC driver is currently under development\n");

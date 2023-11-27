@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#include <math.h>
+
 #include "esp_log.h"
 #include "ps4Handler.hpp"
 #include "env.hpp"
@@ -41,12 +43,30 @@ ps4Handler::ps4Handler(Env* env, const char* macId) : speedSrc(env) {
 
 wheelSpeed ps4Handler::getSpeed(){
     
-    velocity.mag = (float) joyY / 128.0f;
-    velocity.cos = 1.0f;
+    float x = joyX, y = joyY, mag, cos, theta;
 
-    ESP_LOGI("PS4", " vals %d %d\n", joyX, joyY);
+    mag = sqrt(x * x + y * y);
+    velocity.mag = mag / 127.0f;
+    if(velocity.mag > 1.0f) velocity.mag = 1.0f;
+
+    if(y < 0){
+        velocity.mag *= -1.0f;
+    }
+
+    velocity.left = x < 0;
+
+    cos = (float) y / mag;
+    theta = (y < 0) ? acos(-cos) : acos(cos);
+
+
+    if(theta > 1.5f) theta = 1.5f;
+    velocity.u = (0.0f - 1.0f) * theta / 1.5f + 1.0f;
+
+
+    ESP_LOGI("PS4", " vals %f %f %f %f \n", velocity.mag, cos, theta, velocity.u);
 
     return env->mapper->map(velocity);
+    // return wheelSpeed();
 };
 
 

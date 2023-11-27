@@ -46,7 +46,7 @@ public:
     int8_t& joyX = ps.data.analog.stick.rx , &joyY = ps.data.analog.stick.ry;
 
     ps4Handler(Env* env, const char* macId);
-    vectorSpeed velocity;
+    pathSpeed velocity;
     wheelSpeed getSpeed();
 };
 
