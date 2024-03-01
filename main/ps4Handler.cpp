@@ -16,11 +16,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <math.h>
+#include <string.h>
 
 #include "esp_log.h"
 #include "ps4Handler.hpp"
 #include "env.hpp"
 
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include "freertos/idf_additions.h"
 
 PS4Controller ps4Handler::ps;
 ps4Handler* ps4Handler::handler;
@@ -37,36 +41,29 @@ ps4Handler::ps4Handler(Env* env, const char* macId) : speedSrc(env) {
     }
     else ps.begin();
     handler = this;
-
+    run();
 };
 
 
 wheelSpeed ps4Handler::getSpeed(){
     
-    float x = joyX, y = joyY, mag, cos, theta;
+    // float x = joyX, y = joyY, mag, cos, theta;
+    float x = joyX, y = joyY, mag, cos, sin;
 
     mag = sqrt(x * x + y * y);
-    velocity.mag = mag / 127.0f;
-    if(velocity.mag > 1.0f) velocity.mag = 1.0f;
-
-    if(y < 0){
-        velocity.mag *= -1.0f;
-    }
-
-    velocity.left = x < 0;
-
-    cos = (float) y / mag;
-    theta = (y < 0) ? acos(-cos) : acos(cos);
+    cos = x / mag;
+    sin = y / mag;
 
 
-    if(theta > 1.5f) theta = 1.5f;
-    velocity.u = (0.0f - 1.0f) * theta / 1.5f + 1.0f;
+    joyStick joy {
+        .x =  x,
+        .y = y,
+        .sin = sin,
+        .cos = cos,
+        .mag = mag
+    };
 
-
-    ESP_LOGI("PS4", " vals %f %f %f %f \n", velocity.mag, cos, theta, velocity.u);
-
-    return env->mapper->map(velocity);
-    // return wheelSpeed();
+    return env->mapper->map(joy);
 };
 
 
@@ -82,6 +79,8 @@ void ps4Handler::disConnectCallback(){
 void ps4Handler::connectCallback(){
     handler->env->src = handler;
     ESP_LOGI("PS4", " Connected");
+    ps.setLed(0xff, 0x00, 0x00);
+    ps.sendToController();
 
 };
 
@@ -89,4 +88,48 @@ void ps4Handler::connectCallback(){
 void ps4Handler::eventCallback(){
     // ESP_LOGI("PS4", "event recieved");
     
+}
+
+void ps4Handler::run(){
+    if(!uXtask) xTaskCreatePinnedToCore(ps4Handler::srun, "ps4UxTask", 4096, this, 1, &uXtask, 1);
+}
+
+
+void ps4Handler::srun(void *ptr){
+
+    ps4Handler* hand = (ps4Handler*) ptr;
+    
+    uint8_t srumble = 0, brumble = 0; 
+    float x, y, mag, cos, sin;
+    while (1)
+    {
+
+        if(ps.L2()) hand->env->mapper->factor = ps.L2Value();
+        else hand->env->mapper->factor = 0;
+
+
+        x = hand->joyX;
+        y = hand->joyY;
+
+        mag = sqrt(x * x + y * y);
+        cos = x / mag;
+        sin = y / mag;
+
+
+
+        joyStick joy {
+            .x =  x,
+            .y = y,
+            .sin = sin,
+            .cos = cos,
+            .mag = mag
+        };
+
+
+        memcpy(hand->env->motorHandler->speeds, hand->env->mapper->map(joy).rawSpeed, 4 * sizeof(float));
+        hand->env->motorHandler->update();
+
+        vTaskDelay(pdMS_TO_TICKS(1000.0f / hand->uxUpdateFreq));
+    }
+
 };

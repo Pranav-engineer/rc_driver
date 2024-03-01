@@ -23,6 +23,8 @@
 
 #include "speedSrc.hpp"
 
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
 
 /**
  * @brief ps4Handler handles ps4 interface and UI and complete I/O
@@ -40,6 +42,10 @@ private:
     static void disConnectCallback();
     static void eventCallback();
 
+    void run();
+    static void srun(void* ptr);
+    TaskHandle_t uXtask = 0;
+
 public:
 
     float maxSpeed = 0.5f;
@@ -48,6 +54,8 @@ public:
     ps4Handler(Env* env, const char* macId);
     pathSpeed velocity;
     wheelSpeed getSpeed();
+
+    uint8_t uxUpdateFreq = 10;
 };
 
 

@@ -21,11 +21,13 @@
 #include "freertos/task.h"
 #include <iostream>
 #include <qmd.hpp>
+#include <esp_log.h>
 
 #include "env.hpp"
 #include "ps4Handler.hpp"
 #include "qmdHandler.hpp"
 
+#define LOG "MAIN"
 
 Env env;
 speedMapper map;
@@ -34,15 +36,47 @@ int dirPins[] = {26, 25, 33, 32};
 
 qmdHandler upd;
 
+
+/**
+ * @brief testSource to simulate speedSrc for debugging hardware errors 
+ * 
+ */
+class testSource : public speedSrc{
+
+float val = 0.0f, diff = 0.01f;
+public:
+
+    testSource(Env* env) : speedSrc(env) {};
+     
+    wheelSpeed getSpeed() {
+        if(val >= 0.5f || val <= -0.5f) diff = - diff;
+        val += diff;
+
+        wheelSpeed spd;
+        spd.rawSpeed[0] = val;
+        spd.rawSpeed[1] = val;
+        spd.rawSpeed[2] = val;
+        spd.rawSpeed[3] = val;
+
+        return spd;
+    };
+};
+
+
+
+
 extern "C" void app_main(void){
-    printf("RC driver is currently under development\n");
+    ESP_LOGI(LOG, "RC driver is currently under development\n");
 
     env =  Env{
         .mapper = &map,
-        .src = new ps4Handler(&env, "b8:d6:1a:44:98:7e"),
         .motorHandler = new qmd(4, pwmPins, dirPins)
     };
+    
+    // env.src = new testSource(&env);
+    env.src = new ps4Handler(&env, "B0:DC:EF:DD:39:56");
+    // env.src = new urosHandler(&env);
 
-    upd = qmdHandler(&env);
-    upd.run();
+    // upd = qmdHandler(&env);
+    // upd.run();
 };      

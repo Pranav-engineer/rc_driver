@@ -19,6 +19,23 @@
 #ifndef SPEED_MAPPER_HPP
 #define SPEED_MAPPER_HPP
 
+#include <inttypes.h>
+
+/**
+ * @brief joystick inputs
+ * 
+ */
+struct joyStick
+{
+    float x = 0, y = 0, sin = 0, cos = 0, mag = 0;
+};
+
+
+struct circularJoyStick
+{
+    float xc = 0, yc = 0;
+};
+
 
 /**
  * @brief wheelSpeed to represent normalized wheel speed
@@ -82,8 +99,14 @@ struct phySpeed {
 class speedMapper {
 
 public:
+
+
+    uint8_t factor = 0.0f;
+    float wheelRatio = 0.0f,  maxRatio = 1.0f, minRatio = 0.2f;
     virtual wheelSpeed map(pathSpeed& vec);
     virtual wheelSpeed map(phySpeed& phy);
+    virtual wheelSpeed map(joyStick& joy);
+    // virtual wheelSpeed map(circularJoyStick& joy);
 };
 
 
