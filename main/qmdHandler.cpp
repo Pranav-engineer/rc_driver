@@ -32,7 +32,7 @@ void qmdHandler::srun(void* hand){
     Env* en = ((qmdHandler*)hand)->env;
     while (true)
     {
-        memcpy(en->motorHandler->speeds, en->src->getSpeed().rawSpeed, 4 * sizeof(float));
+        memcpy(en->motorHandler->speeds, en->src->getSpeed().rawSpeed, 6 * sizeof(float));
         en->motorHandler->update();
 
         vTaskDelay(pdMS_TO_TICKS(1000 /  handler->updateFrequency));

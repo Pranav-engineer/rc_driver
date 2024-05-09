@@ -31,6 +31,7 @@ struct joyStick
 };
 
 
+
 struct circularJoyStick
 {
     float xc = 0, yc = 0;
@@ -42,11 +43,13 @@ struct circularJoyStick
  */
 struct wheelSpeed {
 
-    float rawSpeed[4] = {0.0f};
+    float rawSpeed[6] = {0.0f};
     float &v1 = rawSpeed[0];
     float &v2 = rawSpeed[1];
     float &v3 = rawSpeed[2];
     float &v4 = rawSpeed[3];
+    float &v5 = rawSpeed[4];
+    float &v6 = rawSpeed[5];
 };
 
 
@@ -102,7 +105,7 @@ public:
 
 
     uint8_t factor = 0.0f;
-    float wheelRatio = 0.0f,  maxRatio = 1.0f, minRatio = 0.2f;
+    float wheelRatio = 0.0f,  maxRatio = 1.0f, minRatio = 0.1f;
     virtual wheelSpeed map(pathSpeed& vec);
     virtual wheelSpeed map(phySpeed& phy);
     virtual wheelSpeed map(joyStick& joy);

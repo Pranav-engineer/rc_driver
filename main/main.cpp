@@ -22,6 +22,7 @@
 #include <iostream>
 #include <qmd.hpp>
 #include <esp_log.h>
+#include <driver/gpio.h>
 
 #include "env.hpp"
 #include "ps4Handler.hpp"
@@ -31,8 +32,24 @@
 
 Env env;
 speedMapper map;
-int pwmPins[] = {12, 13, 14, 27};
+int pwmPins[] = {
+    GPIO_NUM_12,             //  front right
+    GPIO_NUM_13,            //  front left
+    GPIO_NUM_14,             // centre right
+    GPIO_NUM_27,             // center left
+    GPIO_NUM_26,             // back right
+    GPIO_NUM_25,             // back left
+    GPIO_NUM_33,
+    GPIO_NUM_32,
+    GPIO_NUM_22,
+    GPIO_NUM_23,
+    GPIO_NUM_15,
+    GPIO_NUM_19,
+    };
+
 int dirPins[] = {26, 25, 33, 32};
+// int pwmPins[] = {12, 13, 14, 27};
+// int dirPins[] = {26, 25, 33, 32};
 
 qmdHandler upd;
 
@@ -49,14 +66,16 @@ public:
     testSource(Env* env) : speedSrc(env) {};
      
     wheelSpeed getSpeed() {
-        if(val >= 0.5f || val <= -0.5f) diff = - diff;
+        if(val >= 0.9f || val <= 0.1f) diff = - diff;
         val += diff;
 
         wheelSpeed spd;
         spd.rawSpeed[0] = val;
         spd.rawSpeed[1] = val;
         spd.rawSpeed[2] = val;
-        spd.rawSpeed[3] = val;
+        spd.rawSpeed[3] = 0;
+        spd.rawSpeed[4] = 0;
+        spd.rawSpeed[5] = 0;
 
         return spd;
     };
@@ -70,12 +89,13 @@ extern "C" void app_main(void){
 
     env =  Env{
         .mapper = &map,
-        .motorHandler = new qmd(4, pwmPins, dirPins)
+        .motorHandler = new qmd(6, pwmPins, dirPins)
     };
     
     // env.src = new testSource(&env);
     env.src = new ps4Handler(&env, "B0:DC:EF:DD:39:56");
     // env.src = new urosHandler(&env);
+
 
     // upd = qmdHandler(&env);
     // upd.run();

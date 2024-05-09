@@ -126,7 +126,7 @@ void ps4Handler::srun(void *ptr){
         };
 
 
-        memcpy(hand->env->motorHandler->speeds, hand->env->mapper->map(joy).rawSpeed, 4 * sizeof(float));
+        memcpy(hand->env->motorHandler->speeds, hand->env->mapper->map(joy).rawSpeed, 6 * sizeof(float));
         hand->env->motorHandler->update();
 
         vTaskDelay(pdMS_TO_TICKS(1000.0f / hand->uxUpdateFreq));

@@ -55,17 +55,22 @@ wheelSpeed speedMapper::map(joyStick &joy)
     // float magnitude = joy.mag / max_r;
     
     float turnDamp = 1.5f;
-    
+ ]   
     // flip y axis
-    joy.sin = - joy.sin;
-    joy.cos = - joy.cos;
+    // joy.sin = - joy.sin;
+    // joy.cos = - joy.cos;
+
     whl.rawSpeed[2]  = magnitude * (joy.sin + joy.cos / turnDamp);
     whl.rawSpeed[3]  = magnitude * (joy.sin - joy.cos / turnDamp);
 
-    wheelRatio = factor * (maxRatio - minRatio) + minRatio;
+    wheelRatio = factor  / 255.0f * (maxRatio - minRatio) + minRatio;
 
-    whl.rawSpeed[0] = whl.rawSpeed[2] * wheelRatio;
-    whl.rawSpeed[1] = whl.rawSpeed[3] * wheelRatio;
+    // whl.rawSpeed[0] = whl.rawSpeed[2] * wheelRatio;
+    // whl.rawSpeed[1 = whl.rawSpeed[3] * wheelRatio;
+    whl.rawSpeed[0] = whl.rawSpeed[2];
+    whl.rawSpeed[1] = whl.rawSpeed[3];
+    whl.rawSpeed[4] = whl.rawSpeed[0] * wheelRatio;
+    whl.rawSpeed[5] =  whl.rawSpeed[1] * wheelRatio;
 
     for(int i = 0; i < 4; i++) {
         if(whl.rawSpeed[i] > 1.0f) whl.rawSpeed[i] = 1.0f;
