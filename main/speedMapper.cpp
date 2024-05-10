@@ -33,7 +33,7 @@ wheelSpeed speedMapper::map(pathSpeed& vec){
 
     return speed;
 };
-
+    
 
 /** @todo define following */
 wheelSpeed speedMapper::map(phySpeed& phy){
